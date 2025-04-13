@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %} {# Load crispy tags #}
+
+{% block title %}{% if object %}Edit Category{% else %}Add New Category{% endif %}{% endblock %}
+
+{% block content %}
+<h2>{% if object %}Edit Category: {{ object.name }}{% else %}Add New Category{% endif %}</h2>
+<hr>
+<form method="post">
+    {% csrf_token %} {# Crucial for security #}
+    {{ form|crispy }} {# Render form using crispy forms & bootstrap5 #}
+    <button type="submit" class="btn btn-success">{% if object %}Update{% else %}Save{% endif %} Category</button>
+    <a href="{% if object %}{{ object.get_absolute_url }}{% else %}{% url 'category_list' %}{% endif %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

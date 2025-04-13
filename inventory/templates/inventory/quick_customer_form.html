@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Quick Add Customer{% endblock %}
+
+{% block content %}
+<h2>Quick Add Customer</h2>
+<p>Add essential customer details quickly.</p>
+<hr>
+<form method="post" action="{% url 'quick_customer_create' %}">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary">Save Customer</button>
+     <a href="{{ request.META.HTTP_REFERER|default:customer_list }}" class="btn btn-secondary">Cancel</a> {# Go back #}
+</form>
+{% endblock %}

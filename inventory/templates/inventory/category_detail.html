@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category.name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+     <h2>Category: {{ category.name }}</h2>
+     <div>
+        <a href="{% url 'category_update' category.pk %}" class="btn btn-warning">Edit</a>
+        <a href="{% url 'category_delete' category.pk %}" class="btn btn-danger">Delete</a>
+        <a href="{% url 'category_list' %}" class="btn btn-secondary">Back to List</a>
+     </div>
+</div>
+
+<p><strong>Description:</strong> {{ category.description|default:"N/A" }}</p>
+
+<hr>
+
+<h3>Products in this Category</h3>
+{% if products %}
+<ul class="list-group">
+    {% for product in products %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+            <span class="badge bg-primary rounded-pill">{{ product.stock_quantity }} in stock</span>
+        </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No products found in this category.</p>
+{% endif %}
+{% endblock %}

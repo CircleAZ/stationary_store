@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ form_title }}{% endblock %}
+
+{% block content %}
+<h2>{{ form_title }}</h2>
+<hr>
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="card mb-4">
+        <div class="card-header">Order Details</div>
+        <div class="card-body">
+            {{ order_form|crispy }}
+            {# Add a link to quickly add a customer if needed #}
+             <a href="{% url 'quick_customer_create' %}" class="btn btn-sm btn-outline-primary mt-2" target="_blank" rel="noopener noreferrer">Quick Add New Customer</a>
+             <small class="form-text text-muted ms-2">(Opens in new tab. Refresh this page after adding to see the new customer in the list.)</small>
+
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">Order Items</div>
+        <div class="card-body">
+             {{ item_formset.management_form }} {# Important for formset #}
+             {% crispy item_formset item_formset.form.helper %} {# Render formset using crispy #}
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">{% if order %}Update{% else %}Create{% endif %} Order</button>
+    <a href="{% if order %}{% url 'order_detail' order.pk %}{% else %}{% url 'order_list' %}{% endif %}" class="btn btn-secondary">Cancel</a>
+</form>
+
+{% endblock %}
+
+{% block extra_js %}
+{# Optional: Add JS here for dynamically adding/removing item forms if needed #}
+{# Or use a library like django-dynamic-formset #}
+<script>
+    // Basic example to make sure product price populates if using JS later
+    // Requires more setup (e.g. data attributes on product options)
+    // console.log("Order form JS loaded.");
+</script>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Confirm Delete{% endblock %}
+
+{% block content %}
+<h2>Confirm Deletion</h2>
+<hr>
+<p>Are you sure you want to delete <strong>{{ object }}</strong>?</p>
+
+{# Add warnings based on object type #}
+{% if object.products.exists and object|model_name == 'category' %}
+    <div class="alert alert-danger">Warning: This category contains products. Deletion might be blocked or products might be affected.</div>
+{% elif object.orders.exists and object|model_name == 'customer' %}
+     <div class="alert alert-danger">Warning: This customer has existing orders. Deletion might be blocked.</div>
+ {% elif object|model_name == 'order' %}
+     <div class="alert alert-warning">Warning: Deleting this order will permanently remove it and restore stock for its items. Consider cancelling the order instead if possible.</div>
+ {% elif object|model_name == 'product' and order_items_exist %} {# Need to pass order_items_exist context from view if checking #}
+      <div class="alert alert-danger">Warning: This product exists in past orders. Deletion might be blocked. Consider deactivating it instead.</div>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a href="{{ object.get_absolute_url|default:request.META.HTTP_REFERER|default:view.success_url }}" class="btn btn-secondary">Cancel</a> {# Try to go back #}
+</form>
+
+{# Custom template filter needed for model_name check above #}
+{# Create templatetags folder inside inventory app #}
+{# inventory/templatetags/__init__.py (empty file) #}
+{# inventory/templatetags/app_filters.py:
+from django import template
+register = template.Library()
+@register.filter(name='model_name')
+def model_name(value):
+    return value.__class__._meta.model_name
+#}
+{# Then load in template: {% load app_filters %} #}
+{% endblock %}
